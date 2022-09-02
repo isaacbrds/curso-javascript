@@ -6,6 +6,20 @@ app.use(express.json())
 
 const customers = [];
 
+function verifyIfExistsAccountCPF(req, res, next) {
+  const { cpf } = req.headers;
+
+  const customer = customers.find((customer) => customer.cpf === cpf)
+
+  if(!customer) {
+    return res.status(400).json({error: "Customer not found!"})
+  }
+
+  req.customer = customer;
+
+  return next();
+}
+
 app.post('/v1/api/account', (req, res) => {
   const { cpf, name } = req.body;
   
@@ -25,17 +39,29 @@ app.post('/v1/api/account', (req, res) => {
   return res.status(201).send();
 })
 
-app.get('/v1/api/statement/:cpf', (req, res) => {
-  const { cpf } = req.params;
-
+app.get('/v1/api/statement', verifyIfExistsAccountCPF, (req, res) => {
   
-  const customer = customers.find( (customer) => customer.cpf === cpf);
-
-  if (!customer) {
-    return res.status(400).json({ error: 'Customer not found!' });
-  }
+  const { customer } = req;
 
   return res.json(customer.statement);
+})
+
+
+app.post('/v1/api/deposit', verifyIfExistsAccountCPF, (req, res) => {
+  const { description, amount } = req.body;
+
+  const { customer } = req;
+
+  const statementOperation = {
+    description: description,
+    amount: amount,
+    created_at: new Date(),
+    type: "Credit"
+  }
+
+  customer.statement.push(statementOperation)
+
+  return res.status(201).json( customer )
 })
 
 app.listen(8000)
