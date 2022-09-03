@@ -112,4 +112,19 @@ app.get('/v1/api/statement/date', verifyIfExistsAccountCPF, (req, res)=>{
   return res.json(statement);
 })
 
+app.put('/v1/api/account', verifyIfExistsAccountCPF, (req, res) => {
+  const {name} = req.body;
+  const {customer} = req;
+
+  customer.name = name;
+
+  return res.status(201).send();
+})
+
+app.get('/v1/api/account', verifyIfExistsAccountCPF, (req, res)=>{
+  const {customer} = req;
+
+  return res.status(200).json(customer);
+})
+
 app.listen(8000)
