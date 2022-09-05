@@ -1,17 +1,12 @@
 import express  from 'express';
+import { categoriesRoutes } from './routes/categories.routes';
 
 const app = express();
+
 app.use(express.json()); 
 
-app.get('/', (req, res)=>{
-  return res.json({message: 'Hello World!'})
-})
+app.use(categoriesRoutes);
 
-app.post('/courses', (req, res)=>{
-  const {name} = req.body;
-
-  return res.status(201).json({name})
-})
 
 app.listen(3000, ()=>{
   console.log('listening on port 3000')
