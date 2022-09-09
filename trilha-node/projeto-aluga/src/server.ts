@@ -1,12 +1,10 @@
 import express  from 'express';
-import { categoriesRoutes } from './routes/categories.routes';
-import { specificationsRoutes  } from './routes/specifications.routes';
+import { router } from './routes'
 const app = express();
 
 app.use(express.json()); 
+app.use(router);
 
-app.use( '/categories' ,categoriesRoutes);
-app.use( '/specifications' , specificationsRoutes);
 
 app.listen(3000, ()=>{
   console.log('listening on port 3000')
